@@ -54,6 +54,7 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -171,6 +172,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     JTable tableEntities;
     private JScrollPane scrEntities;
     private JToggleButton butCompact;
+    private JButton butRefreshUnits;
 
     private MekTableModel mekModel;
 
@@ -274,8 +276,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         lblTechLevel = new JLabel("");
         lblTechLevel.setToolTipText(Messages.getString("ChatLounge.TechLevelLabelToolTip")); //$NON-NLS-1$
 
-        butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
+        butCompact = new JToggleButton(
+                Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
+        butCompact.setToolTipText(Messages
+                .getString("ChatLounge.butCompact.ToolTip")); //$NON-NLS-1$
         butCompact.addActionListener(this);
+
+        butRefreshUnits = new JButton(
+                Messages.getString("ChatLounge.butRefreshUnits")); //$NON-NLS-1$
+        butRefreshUnits.setToolTipText(Messages.getString(
+                "ChatLounge.butRefreshUnits.ToolTip", //$NON-NLS-1$
+                new Object[] { Configuration.unitsDir() }));
+        butRefreshUnits.addActionListener(this);
 
         butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
         Font font = null;
@@ -642,6 +654,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.weighty = 0.0;
         c.anchor = GridBagConstraints.NORTHEAST;
         panel1.add(butCompact, c);
+        c.gridx++;
+        panel1.add(Box.createHorizontalStrut(10));
+        c.gridx++;
+        panel1.add(butRefreshUnits, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
@@ -2437,9 +2453,6 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
             }
         });
-        // FIXME: this isn't working right, but is necessary for the key
-        // listener to work right
-        // dialog.setFocusable(true);
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -2681,6 +2694,18 @@ public class ChatLounge extends AbstractPhaseDisplay
                 tableEntities.setRowHeight(80);
             }
             refreshEntities();
+        } else if (ev.getSource().equals(butRefreshUnits)) {
+            if (MechSummaryCache.cacheExists()) {
+                MechSummaryCache.getInstance().loadMechData();
+            } else {
+                MechSummaryCache.getInstance().addListener(
+                        mechSummaryCacheListener);
+            }
+            //new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
+            butLoad.setEnabled(false);
+            butArmy.setEnabled(false);
+            butLoadList.setEnabled(false);
+            butRefreshUnits.setEnabled(false);
         } else if (ev.getSource().equals(butChangeStart)) {
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerSelected();
@@ -2978,7 +3003,11 @@ public class ChatLounge extends AbstractPhaseDisplay
      * MechSummaryCache that must be removed explicitly.
      */
     public void die() {
-        MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
+        // Remove registered listener, if the MechSummaryCache is still around
+        if (MechSummaryCache.cacheExists()) {
+            MechSummaryCache.getInstance().removeListener(
+                    mechSummaryCacheListener);
+        }
     }
 
     /**
