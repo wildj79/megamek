@@ -760,6 +760,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     }
 
      public void run() {
+         if (!unitLoadingDialog.isVisible()) {
+             unitLoadingDialog.startMonitoring();
+             unitLoadingDialog.setVisible(true);
+         }
          // Loading mechs can take a while, so it will have its own thread.
          // This prevents the UI from freezing, and allows the
          // "Please wait..." dialog to behave properly on various Java VMs.

@@ -80,10 +80,15 @@ public class UnitLoadingDialog extends JDialog {
         // move to middle of screen
         setLocationRelativeTo(frame);
 
+        startMonitoring();
+    }
+
+    public void startMonitoring() {
+        loadingDone = false;
         Runnable r = new Runnable() {
             public void run() {
-                while (!loadingDone && 
-                        !MechSummaryCache.getInstance().isInitialized()) {
+                while (!loadingDone
+                        && !MechSummaryCache.getInstance().isInitialized()) {
                     updateCounts();
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);
@@ -93,7 +98,11 @@ public class UnitLoadingDialog extends JDialog {
                 }
             }
         };
-        MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
+        if (!MechSummaryCache.getInstance().containsListener(
+                mechSummaryCacheListener)) {
+            MechSummaryCache.getInstance()
+                    .addListener(mechSummaryCacheListener);
+        }
         Thread t = new Thread(r, "Unit Loader Dialog"); //$NON-NLS-1$
         t.start();
     }
