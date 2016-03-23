@@ -75,6 +75,10 @@ public class MechSummaryCache {
     private EntityVerifier entityVerifier = null;
     private Thread loader;
 
+    public static synchronized boolean cacheExists() {
+        return m_instance != null;
+    }
+
     public static synchronized MechSummaryCache getInstance() {
         return getInstance(false);
     }
@@ -129,6 +133,12 @@ public class MechSummaryCache {
     public void addListener(Listener listener) {
         synchronized (listeners) {
             listeners.add(listener);
+        }
+    }
+
+    public boolean containsListener(Listener listener) {
+        synchronized (listeners) {
+            return listeners.contains(listener);
         }
     }
 
