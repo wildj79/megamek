@@ -25,15 +25,21 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
-import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.swing.ImageIcon;
+
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
-import sun.awt.image.ToolkitImage;
 
 /**
  * Generic utility methods for image data
@@ -140,12 +146,12 @@ public final class ImageUtil {
         }
     }
     
-    public static Image loadImageFromFile(String fileName, Toolkit toolkit) {
+    public static Image loadImageFromFile(String fileName) {
         if(null == fileName) {
             return null;
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
-            Image img = loader.loadImage(fileName, toolkit);
+            Image img = loader.loadImage(fileName);
             if (null != img) {
                 return img;
             }
@@ -156,40 +162,43 @@ public final class ImageUtil {
     private ImageUtil() {}
     
     public interface ImageLoader {
-        Image loadImage(String fileName, Toolkit toolkit);
+        Image loadImage(String fileName);
     }
     
     public static class AWTImageLoader implements ImageLoader {
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
                 System.out.println("Trying to load image for a non-existant "
                         + "file! Path: " + fileName);
             }
-            ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
+            // Test if this is an animated image
+            Boolean isAnimated = false;
+            ImageReader reader = ImageIO.getImageReadersBySuffix("GIF").next();
+            ImageInputStream in;
+            try {
+                in = ImageIO.createImageInputStream(new File(fileName));
+                reader.setInput(in);
+                if (reader.getNumImages(true) > 1) {
+                    isAnimated = true;
+                }
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            
+            Image result = null;
+            try {
+                result = new ImageIcon(new URL(fileName)).getImage();
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             if(null == result) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = result.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                result.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
-            }
-            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
     
@@ -212,7 +221,7 @@ public final class ImageUtil {
         }
         
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
             if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
@@ -229,27 +238,15 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) toolkit.getImage(baseName);
+            Image base = null;
+            try {
+                base = new ImageIcon(new URL(baseName)).getImage();
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             if(null == base) {
                 return null;
-            }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = base.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                base.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
@@ -257,38 +254,6 @@ public final class ImageUtil {
                 start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
             g2d.dispose();
             return result;
-        }
-    }
-    
-    private static class FinishedLoadingObserver implements ImageObserver {
-        private static final int DONE
-            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
-        
-        private final Thread mainThread;
-        private volatile boolean loaded = false;
-        private volatile boolean animated = false;
-
-        public FinishedLoadingObserver(Thread mainThread) {
-            this.mainThread = mainThread;
-        }
-        
-        @Override
-        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 0) {
-                loaded = true;
-                animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
-                mainThread.interrupt();
-                return false;
-            }
-            return true;
-        }
-        
-        public boolean isLoaded() {
-            return loaded;
-        }
-        
-        public boolean isAnimated() {
-            return animated;
         }
     }
 }
