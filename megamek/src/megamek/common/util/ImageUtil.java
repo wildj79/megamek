@@ -29,7 +29,7 @@ import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,7 +190,7 @@ public final class ImageUtil {
             
             Image result = null;
             try {
-                result = new ImageIcon(new URL(fileName)).getImage();
+                result = new ImageIcon(Paths.get(fileName).toUri().toURL()).getImage();
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -240,7 +240,7 @@ public final class ImageUtil {
             String baseName = fileName.substring(0, tileStart);
             Image base = null;
             try {
-                base = new ImageIcon(new URL(baseName)).getImage();
+                base = new ImageIcon(Paths.get(baseName).toUri().toURL()).getImage();
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
