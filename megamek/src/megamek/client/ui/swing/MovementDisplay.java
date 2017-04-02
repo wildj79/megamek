@@ -318,7 +318,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getClient().getGame().addGameListener(this);
             clientgui.getBoardView().addBoardViewListener(this);
             clientgui.getClient().getGame().setupTeams();
-            clientgui.bv.addKeyListener(this);
         }
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
@@ -356,6 +355,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         shiftheld = false;
         
         registerKeyCommands();
+
+        if (clientgui.getClient().isMyTurn() && (cen == Entity.NONE)) {
+            beginMyTurn();
+        }
     }
 
     /**
