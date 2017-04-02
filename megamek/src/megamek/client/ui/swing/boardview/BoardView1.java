@@ -710,6 +710,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
@@ -1072,6 +1073,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (Sprite s: isometricWreckSprites) {
                 s.prepare();
             }
+        }
+        // Update to reflect new skin
+        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+            updateSkin();
         }
     }
 
@@ -5976,7 +5981,68 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         return scrollpane;
     }
-    
+
+    /**
+     * Used to update skin values after BV is created.
+     */
+    synchronized void updateSkin() {
+        scrollPaneBgBuffer = null;
+
+        SkinSpecification bvSkinSpec = SkinXMLHandler
+                .getSkin(SkinSpecification.UIComponents.BoardView.getComp());
+
+        // Setup background icons
+        try {
+            File file;
+            if (bvSkinSpec.backgrounds.size() > 0) {
+                file = new MegaMekFile(Configuration.widgetsDir(),
+                                bvSkinSpec.backgrounds.get(0)).getFile();
+                if (!file.exists()) {
+                    System.err.println("BoardView1 Error: icon doesn't exist: "
+                                       + file.getAbsolutePath());
+                    bvBgImage = null;
+                    bvBgShouldTile = false;
+                } else {
+                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath());
+                    bvBgShouldTile = bvSkinSpec.tileBackground;
+                }
+            } else {
+                bvBgImage = null;
+                bvBgShouldTile = false;
+            }
+            if (bvSkinSpec.backgrounds.size() > 1) {
+                file = new MegaMekFile(Configuration.widgetsDir(),
+                                bvSkinSpec.backgrounds.get(1)).getFile();
+                if (!file.exists()) {
+                    System.err.println("BoardView1 Error: icon doesn't exist: "
+                                       + file.getAbsolutePath());
+                    scrollPaneBgBuffer = null;
+                    scrollPaneBgImg = null;
+                } else {
+                    scrollPaneBgImg = ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath());
+                }
+            } else {
+                scrollPaneBgBuffer = null;
+                scrollPaneBgImg = null;
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading BoardView background images!");
+            System.out.println(e.getMessage());
+        }
+
+        scrollpane.setBorder(new MegamekBorder(bvSkinSpec));
+
+        if (!bvSkinSpec.showScrollBars) {
+            vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
+            hbar.setPreferredSize(new Dimension(hbar.getWidth(), 0));
+        } else {
+            vbar.setPreferredSize(new Dimension(17, vbar.getHeight()));
+            hbar.setPreferredSize(new Dimension(hbar.getWidth(), 17));
+        }
+    }
+
     AbstractAction DoNothing = new AbstractAction() {
         private static final long serialVersionUID = 5944877465265121983L;
 
@@ -6231,6 +6297,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();
+        // Remove preference listeners
+        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
     }
 
     /**
