@@ -104,13 +104,16 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.logging.Logger;
 import megamek.common.net.Packet;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
+public class ClientGUI extends JPanel
+        implements WindowListener, BoardViewListener, ActionListener, ComponentListener, IPreferenceChangeListener {
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
@@ -259,6 +262,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     public IBoardView getBoardView() {
@@ -906,30 +910,38 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    /**
-     * Shuts down threads and sockets
-     */
-    void die() {
+    void clearPhaseComponents() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        if (bv != null) {
-            //cleanup our timers first
-            bv.die();
-        }
-        Iterator<String> names = phaseComponents.keySet().iterator();
-        while (names.hasNext()) {
-            JComponent component = phaseComponents.get(names.next());
-            if (component instanceof ReportDisplay) {
+        for (JComponent comp : phaseComponents.values()) {
+            if (comp instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
                 }
                 reportHandled = true;
             }
-            if (component instanceof Distractable) {
-                ((Distractable) component).removeAllListeners();
+            if (comp instanceof Distractable) {
+                ((Distractable) comp).removeAllListeners();
             }
-        } // Handle the next component
+            if ((bv != null) && (comp instanceof BoardViewListener)) {
+                bv.removeBoardViewListener((BoardViewListener) curPanel);
+            }
+            if ((menuBar != null) && (comp instanceof ActionListener)) {
+                menuBar.removeActionListener((ActionListener) curPanel);
+            }
+        }
         phaseComponents.clear();
+    }
+
+    /**
+     * Shuts down threads and sockets
+     */
+    void die() {
+        if (bv != null) {
+            //cleanup our timers first
+            bv.die();
+        }
+        clearPhaseComponents();
 
         frame.removeAll();
         frame.setVisible(false);
@@ -2404,6 +2416,23 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public int getPointblankEID() {
         return pointblankEID;
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update to reflect new skin
+        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+            // Clear all UI components
+            clearPhaseComponents();
+            if (chatlounge != null) {
+                chatlounge.die();
+                chatlounge = null;
+            }
+            // Switch cur panel this phase's panel.
+            curPanel = null;
+            switchPanel(getClient().getGame().getPhase());
+            validate();
+        }
     }
 
 }
