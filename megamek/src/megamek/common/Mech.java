@@ -7863,6 +7863,7 @@ public abstract class Mech extends Entity {
                 } else {
                     switch (getEngine().getEngineType()) {
                         case Engine.XL_ENGINE:
+                        case Engine.XL_ENGINE_PROTO:
                             battleForceEngineType = 4;
                             break;
                         case Engine.XXL_ENGINE:
@@ -7877,6 +7878,7 @@ public abstract class Mech extends Entity {
                 if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
                     switch (getEngine().getEngineType()) {
                         case Engine.XL_ENGINE:
+                        case Engine.XL_ENGINE_PROTO:
                             battleForceEngineType = 5;
                             break;
                         case Engine.XXL_ENGINE:
@@ -7892,6 +7894,7 @@ public abstract class Mech extends Entity {
                 } else {
                     switch (getEngine().getEngineType()) {
                         case Engine.XL_ENGINE:
+                        case Engine.XL_ENGINE_PROTO:
                             battleForceEngineType = 5;
                             break;
                         case Engine.COMPACT_ENGINE:

@@ -87,6 +87,7 @@ public class BLKFile {
     public static final int STEAM = 10;
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
+    public static final int XLP = 13;
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -216,6 +217,8 @@ public class BLKFile {
             return Engine.BATTERY;
         } else if (code == BLKFile.SOLAR) {
             return Engine.SOLAR;
+        } else if (code == BLKFile.XLP) {
+            return Engine.XL_ENGINE_PROTO;
           
         } else {
             return -1;
@@ -480,6 +483,9 @@ public class BLKFile {
                         break;
                     case Engine.XL_ENGINE:
                         engineCode = BLKFile.XL;
+                        break;
+                    case Engine.XL_ENGINE_PROTO:
+                        engineCode = BLKFile.XLP;
                         break;
                     case Engine.XXL_ENGINE:
                         engineCode = BLKFile.XXL;

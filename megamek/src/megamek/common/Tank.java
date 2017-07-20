@@ -3357,7 +3357,7 @@ public class Tank extends Entity {
             if (getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
                 usedSlots++;
             }
-            if (getEngine().getEngineType() == Engine.XL_ENGINE) {
+            if (getEngine().getEngineType() == Engine.XL_ENGINE || (getEngine().getEngineType()== Engine.XL_ENGINE_PROTO)) {
                 if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
                     usedSlots++;
                 } else {

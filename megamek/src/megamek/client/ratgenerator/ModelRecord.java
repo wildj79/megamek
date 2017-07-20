@@ -191,6 +191,7 @@ public class ModelRecord extends AbstractUnitRecord {
     	}
     	clan = ms.isClan();
     	if (megamek.common.Engine.getEngineTypeByString(ms.getEngineName()) == megamek.common.Engine.XL_ENGINE
+    	        || megamek.common.Engine.getEngineTypeByString(ms.getEngineName()) == megamek.common.Engine.XL_ENGINE_PROTO
     			|| ms.getArmorType().contains(EquipmentType.T_ARMOR_FERRO_FIBROUS)
     			|| ms.getInternalsType() == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
     		losTech = true;

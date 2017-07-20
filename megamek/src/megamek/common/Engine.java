@@ -70,6 +70,7 @@ public class Engine implements Serializable, ITechnology {
     public final static int STEAM = 10;
     public final static int BATTERY = 11;
     public final static int SOLAR = 12;
+    public final static int XL_ENGINE_PROTO = 13;
     
     //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
     //The other engine types are assumed to have a value of ) in the array
@@ -212,6 +213,7 @@ public class Engine implements Serializable, ITechnology {
             case MAGLEV:
             case BATTERY:
             case SOLAR:
+            case XL_ENGINE_PROTO: 
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -271,6 +273,8 @@ public class Engine implements Serializable, ITechnology {
             return BATTERY;
         } else if (type.toLowerCase().indexOf("solar") != -1) {
             return SOLAR;
+        } else if (type.toLowerCase().indexOf("prototype xl") != -1) {
+            return XL_ENGINE_PROTO;
         } else {
             return NORMAL_ENGINE;
         }
@@ -333,6 +337,7 @@ public class Engine implements Serializable, ITechnology {
             case NORMAL_ENGINE:
                 break;
             case XL_ENGINE:
+            case XL_ENGINE_PROTO:
                 weight *= 0.5;
                 break;
             case LIGHT_ENGINE:
@@ -450,6 +455,9 @@ public class Engine implements Serializable, ITechnology {
             case SOLAR:
                 return Integer.toString(engineRating)
                         + Messages.getString("Engine.Solar");
+            case XL_ENGINE_PROTO:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.XLProto");
             default:
                 return Messages.getString("Engine.invalid");
         }
@@ -496,6 +504,8 @@ public class Engine implements Serializable, ITechnology {
                 sb.append(" Battery"); //$NON-NLS-1$
             case SOLAR:
                 sb.append(" Solar");  //$NON-NLS-1$
+            case XL_ENGINE_PROTO:
+                sb.append(" Prototype XL");  //$NON-NLS-1$
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
                 break;
@@ -602,7 +612,15 @@ public class Engine implements Serializable, ITechnology {
             } else {
                 slots = new int[]{ 0, 1, 2 };
             }
-            return slots;
+            return slots;            
+        } else if (engineType == XL_ENGINE_PROTO) {
+            int[] slots;
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                slots = new int[]{ 0, 1 };
+            } else {
+                slots = new int[]{ 0, 1, 2 };
+            }
+            return slots;         
         } else if ((engineType == XXL_ENGINE) && hasFlag(CLAN_ENGINE)) {
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
@@ -634,6 +652,8 @@ public class Engine implements Serializable, ITechnology {
         switch (engineType) {
             case XXL_ENGINE:
                 return 2;
+            case XL_ENGINE_PROTO:
+                return 1;
             default:
                 return 0;
         }
@@ -741,6 +761,8 @@ public class Engine implements Serializable, ITechnology {
             case NONE:
                 cost = 0;
                 break;
+            case XL_ENGINE_PROTO:
+                cost = (engineRating*100000)/75;  //TODO Multiply by the Tonnage of the unit.
             }
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
@@ -789,6 +811,11 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC)
             .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
     
+    private static final TechAdvancement IS_XL_PROTOTYPE_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2556, DATE_NONE, DATE_NONE, 2579, DATE_NONE)
+            .setISApproximate(true,false,false,true,false).setPrototypeFactions(F_TH)
+            .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_X, RATING_X);
+    
     private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
@@ -798,6 +825,11 @@ public class Engine implements Serializable, ITechnology {
             .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
             .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+    
+    private static final TechAdvancement IS_LARGE_XL_PROTOTYPE_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2556, DATE_NONE, DATE_NONE, 2579, DATE_NONE)
+            .setISApproximate(true,false,false,true,false).setPrototypeFactions(F_TH)
+            .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_X, RATING_X);
     
     private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
@@ -950,6 +982,12 @@ public class Engine implements Serializable, ITechnology {
             return SUPPORT_BATTERY_TA;
         case SOLAR:
             return SUPPORT_SOLAR_TA;
+        case XL_ENGINE_PROTO:
+            if (hasFlag(LARGE_ENGINE)) {
+                    return IS_LARGE_XL_PROTOTYPE_TA;
+                } else {
+                    return IS_XL_PROTOTYPE_TA;
+                }
         case NONE:
             return SUPPORT_NONE_TA;
         default:
@@ -1164,6 +1202,25 @@ public class Engine implements Serializable, ITechnology {
                 return TechConstants.T_ALLOWED_ALL;
             case SOLAR:
                 return TechConstants.T_ALLOWED_ALL;
+                
+            case XL_ENGINE_PROTO:
+                if (isLarge) {
+                    if (year <= 2546) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                        } else if (year <= 2589) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                          } else {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                        }
+                } else {
+                    if (year <= 2546) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                        } else if (year <= 2589) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                          } else {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                        }
+                }
             case NONE:
                 return TechConstants.T_ALLOWED_ALL;
             case COMPACT_ENGINE:
