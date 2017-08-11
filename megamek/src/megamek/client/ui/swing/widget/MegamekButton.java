@@ -26,6 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
 
 /**
@@ -55,6 +58,8 @@ public class MegamekButton extends JButton {
 
     protected BufferedImage bgBuffer = null;
     protected BufferedImage bgPressedBuffer = null;
+
+    private MMLogger logger = null;
 
     /**
      * Keeps track of whether there are images to display for this button, or if
@@ -146,6 +151,20 @@ public class MegamekButton extends JButton {
     }
 
     /**
+     * Get's the logger for this class.
+     *
+     * @return the logging instance
+     * @see megamek.common.logging.MMLogger
+     */
+    private MMLogger getLogger() {
+        if (null == logger) {
+            logger = DefaultMmLogger.getInstance();
+        }
+
+        return logger;
+    }
+
+    /**
      * Initialize the state of the button, using the SkinSpecification linked to
      * the given string.
      *
@@ -197,6 +216,7 @@ public class MegamekButton extends JButton {
      * @param spec
      */
     public void loadIcon(SkinSpecification spec) {
+        final String METHOD_NAME = "loadIcon(SkinSecification)";
         iconsLoaded = true;
         // If there were no background paths loaded, there's nothing to do
         if (!spec.hasBackgrounds()) {
@@ -208,9 +228,12 @@ public class MegamekButton extends JButton {
         // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
-                System.out.println("Error: skin specification for a "
-                        + "Megamek Button does not contain at least "
-                        + "2 background images!");
+//                System.out.println("Error: skin specification for a "
+//                        + "Megamek Button does not contain at least "
+//                        + "2 background images!");
+                getLogger().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                        "Skin specification for a Megamek Button does " +
+                                "not contain at least 2 background images!");
                 iconsLoaded = false;
             }
             java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
@@ -220,9 +243,11 @@ public class MegamekButton extends JButton {
                     spec.backgrounds.get(1)).getFile().toURI();
             backgroundPressedIcon = new ImageIcon(imgURL.toURL());
         } catch (Exception e) {
-            System.out.println("Error: loading background icons for "
-                    + "a Megamekbutton!");
-            System.out.println("Error: " + e.getMessage());
+//            System.out.println("Error: loading background icons for "
+//                    + "a Megamekbutton!");
+//            System.out.println("Error: " + e.getMessage());
+            getLogger().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                    "Error loading background icons for a MegamekButton!", e);
             iconsLoaded = false;
         }
     }
