@@ -175,8 +175,10 @@ public class BotGeometry {
                 boolean flip = getDirection() > 2;
                 HexLine[] edges = a.getEdges();
                 if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                    System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
-                                                                 a.toString()));
+                    owner.log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                            new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " + a.toString()));
+//                    System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
+//                                                                 a.toString()));
                     return 0;
                 }
                 if (edges[getDirection()].getIntercept() == getIntercept()) {
@@ -453,7 +455,9 @@ public class BotGeometry {
             try {
                 HexLine[] edges = getEdges();
                 if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                    System.err.println(new IllegalStateException("Edge[" + i + "] is NULL."));
+                    owner.log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                            new IllegalStateException("Edge[" + i + "] is NULL."));
+                    //System.err.println(new IllegalStateException("Edge[" + i + "] is NULL."));
                     return null;
                 }
                 return edges[i].getIntersection(edges[(i + 1) % 6]);
