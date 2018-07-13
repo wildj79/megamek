@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import megamek.client.ui.Messages;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.NumberHelper;
 import megamek.server.SmokeCloud;
 
 /**
@@ -547,7 +548,7 @@ public class LosEffects {
         boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
         double degree = ai.attackPos.degree(ai.targetPos);
         LosEffects finalLoS;
-        if (degree % 60 == 30) {
+        if (NumberHelper.nearlyEqual(degree % 60, 30d)) {
             finalLoS = LosEffects.losDivided(game, ai, diagramLos, partialCover);
         } else {
             finalLoS = LosEffects.losStraight(game, ai, diagramLos, partialCover);

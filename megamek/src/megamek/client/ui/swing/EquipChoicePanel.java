@@ -62,6 +62,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -698,10 +699,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (bTechMatch
                         && (atCheck.getRackSize() == at.getRackSize())
                         && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
-                                .hasFlag(AmmoType.F_BATTLEARMOR))
+                                    .hasFlag(AmmoType.F_BATTLEARMOR))
                         && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
-                                .hasFlag(AmmoType.F_ENCUMBERING))
-                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                                    .hasFlag(AmmoType.F_ENCUMBERING))
+                        //&& (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                        && NumberHelper.nearlyEqual(atCheck.getTonnage(entity), at.getTonnage(entity))) {
                     vTypes.add(atCheck);
                 }
             }

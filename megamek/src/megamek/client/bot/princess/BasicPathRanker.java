@@ -54,6 +54,7 @@ import megamek.common.Terrains;
 import megamek.common.TripodMech;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.NumberHelper;
 
 /**
  * A very basic pathranker
@@ -245,7 +246,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     StringBuilder formula) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
-        double fallMod = pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
+        double fallMod = pilotingFailure * (NumberHelper.nearlyEqual(pilotingFailure, 1d) ? -1000 : fallShame);
         formula.append("fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
                .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
                .append("]");
@@ -631,7 +632,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // Try to face the enemy.
             double facingMod = calculateFacingMod(movingUnit, game, pathCopy,
                                                   formula);
-            if (facingMod == -10000) {
+            
+            if (NumberHelper.nearlyEqual(facingMod, -10000d)) {
                 return new RankedPath(facingMod, pathCopy, formula.toString());
             }
             utility -= facingMod;

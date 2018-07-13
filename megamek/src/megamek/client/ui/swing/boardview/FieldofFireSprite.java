@@ -13,6 +13,7 @@ import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
+import megamek.common.util.NumberHelper;
 
 /**
  * This sprite is used to paint the field of fire 
@@ -85,10 +86,12 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         
         // when the zoom hasn't changed and there is already
         // a prepared image for these borders, then do nothing more
-        if ((bv.scale == oldZoom) && isReady()) return;
+        if (NumberHelper.nearlyEqual(bv.scale, oldZoom) && isReady()) {
+            return;
+        }
         
-        // when the board is rezoomed, ditch all images
-        if (bv.scale != oldZoom) {
+        // when the board is re-zoomed, ditch all images
+        if (!NumberHelper.nearlyEqual(bv.scale, oldZoom)) {
             oldZoom = bv.scale;
             images = new Image[64][5];
         }
@@ -193,7 +196,10 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     
     @Override
     public boolean isReady() {
-        if (bv.scale != oldZoom) return false;
+        if (!NumberHelper.nearlyEqual(bv.scale, oldZoom)) {
+            return false;
+        }
+        
         return images[borders][rangeBracket] != null;
     }
 

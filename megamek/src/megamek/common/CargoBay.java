@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.util.NumberHelper;
+
 /**
  * Represents a volume of space set aside for carrying general cargo
  * aboard large spacecraft and mobile structures.
@@ -71,10 +73,10 @@ public final class CargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Cargo Space "
+        StringBuilder returnString = new StringBuilder("Cargo Space "
                 + numDoorsString() + " - ");
 
-        if (getUnused() != Math.round(getUnused())) {
+        if (!NumberHelper.nearlyEqual(getUnused(), Math.round(getUnused()))) {
             returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
             returnString.append(String.format("%1$,.0f", getUnused()));

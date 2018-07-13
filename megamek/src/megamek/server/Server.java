@@ -230,6 +230,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -22894,7 +22895,7 @@ public class Server implements Runnable {
         }
 
         // infantry armor can reduce damage
-        if (isPlatoon && (((Infantry) te).getDamageDivisor() != 1.0)) {
+        if (isPlatoon && !NumberHelper.nearlyEqual(((Infantry) te).getDamageDivisor(), 1d)) {
             r = new Report(6074);
             r.subject = te_n;
             r.indent(2);
@@ -26447,7 +26448,7 @@ public class Server implements Runnable {
             }
             r.subject = aero.getId();
             r.add(hitBay.getBayNumber());
-            if (destroyed == (int) destroyed) {
+            if (NumberHelper.nearlyEqual(destroyed, Math.round(destroyed))) {
                 r.add((int) destroyed); 
             } else {
                 r.add(String.valueOf(Math.ceil(destroyed * 2.0) / 2.0));
@@ -34028,7 +34029,7 @@ public class Server implements Runnable {
             int cachedMaxMPExpenditure) {
         final String METHOD_NAME = "checkExtremeGravityMovement(Entity,MoveStep,EntityMovementType,Coords,int)";
         PilotingRollData rollTarget;
-        if (game.getPlanetaryConditions().getGravity() != 1) {
+        if (!NumberHelper.nearlyEqual(game.getPlanetaryConditions().getGravity(), 1f)) {
             if (entity instanceof Mech) {
                 if ((moveType == EntityMovementType.MOVE_WALK)
                     || (moveType == EntityMovementType.MOVE_VTOL_WALK)

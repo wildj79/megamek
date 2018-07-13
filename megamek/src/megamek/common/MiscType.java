@@ -23,6 +23,7 @@ package megamek.common;
 
 import java.math.BigInteger;
 
+import megamek.common.util.NumberHelper;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
@@ -428,7 +429,7 @@ public class MiscType extends EquipmentType {
     @Override
     public double getTonnage(Entity entity, int location) {
 
-        if ((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
+        if (!NumberHelper.nearlyEqual(tonnage, TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
         }
         // check for known formulas
@@ -673,7 +674,7 @@ public class MiscType extends EquipmentType {
                 tonnage = entity.getWeight() / 50;
             }
 
-            if (tonnage == Math.round(tonnage)) {
+            if (NumberHelper.nearlyEqual(tonnage, Math.round(tonnage))) {
                 return tonnage;
             }
 
@@ -807,7 +808,7 @@ public class MiscType extends EquipmentType {
             }
             if (getSubType() == S_IMPROVED) {
                 // Add 2% for small craft, 4% for others
-                if (pct == 0.05) {
+                if (NumberHelper.nearlyEqual(pct, 0.05d)) {
                     pct = 0.07;
                 } else {
                     pct += 0.04;
@@ -829,7 +830,7 @@ public class MiscType extends EquipmentType {
             }
             if (getSubType() == S_IMPROVED) {
                 // Add 2% for small craft, 4% for others
-                if (pct == 0.06) {
+                if (NumberHelper.nearlyEqual(pct, 0.06d)) {
                     pct = 0.08;
                 } else {
                     pct += 0.04;
@@ -868,7 +869,7 @@ public class MiscType extends EquipmentType {
     @Override
     public double getCost(Entity entity, boolean isArmored, int loc) {
         double costValue = cost;
-        if (costValue == EquipmentType.COST_VARIABLE) {
+        if (NumberHelper.nearlyEqual(costValue, EquipmentType.COST_VARIABLE)) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
                 costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING)
@@ -1317,7 +1318,7 @@ public class MiscType extends EquipmentType {
 
     public double getBV(Entity entity, int location) {
         double returnBV = 0.0;
-        if ((bv != BV_VARIABLE) || (null == entity)) {
+        if (!NumberHelper.nearlyEqual(bv, BV_VARIABLE) || (null == entity)) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
             if ((entity instanceof VTOL) && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)

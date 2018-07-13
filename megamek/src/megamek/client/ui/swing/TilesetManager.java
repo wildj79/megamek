@@ -66,6 +66,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -805,7 +806,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 float green = ((float) ((pixel >> 8) & 0xff)) / 255;
                 float blue = ((float) ((pixel) & 0xff)) / 255;
                 // Ignore colors
-                if (!(red == green && green == blue)) {
+                if (!(NumberHelper.nearlyEqual(red, green) && NumberHelper.nearlyEqual(green, blue))) {
                     continue;
                 }
                 if (alpha != 0) {

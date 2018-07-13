@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.util.NumberHelper;
+
 import java.util.Comparator;
 
 /**
@@ -47,7 +49,7 @@ public class WeaponComparatorBV implements Comparator<Mounted> {
             else if (weap1.heat == 0)
                 return 1;
             // if same BV, lower heat first
-            if (weap1.bv == weap2.bv)
+            if (NumberHelper.nearlyEqual(weap1.bv, weap2.bv))
                 return weap1.heat - weap2.heat;
             // otherwise, higher BV first
             return new Double(weap2.bv - weap1.bv).intValue();

@@ -46,6 +46,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {
@@ -329,10 +330,9 @@ public class UnitOverview implements IDisplayable {
         // Lets draw our armor and internal status bars
         int baseBarLength = 23;
         int barLength = 0;
-        double percentRemaining = 0.00;
-
-        percentRemaining = entity.getArmorRemainingPercent();
-        if (percentRemaining != IArmorState.ARMOR_NA) {
+        double percentRemaining = entity.getArmorRemainingPercent();
+        
+        if (!NumberHelper.nearlyEqual(percentRemaining, IArmorState.ARMOR_NA)) {
             barLength = (int) (baseBarLength * percentRemaining);
 
             graph.setColor(Color.darkGray);

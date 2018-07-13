@@ -23,6 +23,7 @@ import megamek.common.SmallCraftBay;
 import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.TechAdvancement;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.NumberHelper;
 
 /**
  * Construction data used by transport bays for mechs, vees, and aerospace units.
@@ -158,9 +159,9 @@ public enum BayData {
                 
             }
         } else if (bay instanceof BattleArmorBay) {
-            if (bay.getWeight() / bay.getCapacity() == 12) {
+            if (NumberHelper.nearlyEqual(bay.getWeight() / bay.getCapacity(), 12d)) {
                 return CS_BATTLE_ARMOR;
-            } else if (bay.getWeight() / bay.getCapacity() == 10) {
+            } else if (NumberHelper.nearlyEqual(bay.getWeight() / bay.getCapacity(),10d)) {
                 return CLAN_BATTLE_ARMOR;
             }
             return IS_BATTLE_ARMOR;

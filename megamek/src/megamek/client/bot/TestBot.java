@@ -52,6 +52,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.NumberHelper;
 
 public class TestBot extends BotClient {
 
@@ -1609,7 +1610,7 @@ public class TestBot extends BotClient {
                     centity.strategy.attack = 1;
                 } else if ((percent <= 1)
                            && (centity.strategy.attack < max_modifier)) {
-                    if (percent == 1) {
+                    if (NumberHelper.nearlyEqual(percent, 1d)) {
                         if (centity.strategy.attack < 1) {
                             centity.strategy.attack = Math.min(
                                     1.4 * centity.strategy.attack, 1);
@@ -1643,7 +1644,7 @@ public class TestBot extends BotClient {
                                && (centity.strategy.target < max_modifier)) {
                         centity.strategy.target *= (1.0 + (4 * num_entities));
                     } else if (percent <= 1) {
-                        if (percent == 1) {
+                        if (NumberHelper.nearlyEqual(percent, 1d)) {
                             centity.strategy.target /= (1.0 + (2 * num_entities));
                         } else {
                             centity.strategy.target /= (1.0 + num_entities);

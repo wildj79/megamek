@@ -44,6 +44,7 @@ import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -918,7 +919,7 @@ public class BasicPathRankerTest {
                                                       LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank != actual.getRank()) {
+        if (!NumberHelper.nearlyEqual(baseRank, actual.getRank())) {
             Assert.fail("Being 1 hex off facing should make no difference in rank.");
         }
         Mockito.when(mockPath.getFinalFacing()).thenReturn(4);

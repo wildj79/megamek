@@ -44,6 +44,7 @@ import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 
 /**
@@ -211,7 +212,7 @@ public class HexTileset {
 
             double thisMatch = baseMatch(hex, entry.getHex());
             // stop if perfect match
-            if (thisMatch == 1.0) {
+            if (NumberHelper.nearlyEqual(thisMatch, 1d)) {
                 bestMatch = entry;
                 break;
             }

@@ -19,6 +19,7 @@ import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
@@ -264,7 +265,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
                         dmg1 = ammoType.getDamagePerShot();
                     }
                 }
-                if (dmg1 == -1) {
+                if (NumberHelper.nearlyEqual(dmg1, -1d)) {
                     dmg1 = weaponType1.getDamage();
                 }
                 if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
@@ -274,7 +275,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
                         dmg2 = ammoType.getDamagePerShot();
                     }
                 }
-                if (dmg2 == -1) {
+                if (NumberHelper.nearlyEqual(dmg2, -1d)) {
                     dmg2 = weaponType2.getDamage();
                 }
 

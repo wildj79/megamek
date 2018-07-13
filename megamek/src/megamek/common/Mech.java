@@ -36,6 +36,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.NumberHelper;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
@@ -3956,7 +3957,7 @@ public abstract class Mech extends Entity {
             if (targetMovementModifier < 3) {
                 targetMovementModifier = 3;
                 bvText.append("3");
-            } else if (targetMovementModifier == 3) {
+            } else if (NumberHelper.nearlyEqual(targetMovementModifier, 3d)) {
                 targetMovementModifier++;
                 bvText.append("+1");
             } else {

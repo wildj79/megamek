@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.util.HashCodeUtil;
+import megamek.common.util.NumberHelper;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
@@ -228,7 +229,7 @@ public class Coords implements Serializable {
         final IdealHex dst = IdealHex.get(d);
 
         // don't divide by 0
-        if (src.cy == dst.cy) {
+        if (NumberHelper.nearlyEqual(src.cy, dst.cy)) {
             return (src.cx < dst.cx) ? Math.PI / 2 : Math.PI * 1.5;
         }
 

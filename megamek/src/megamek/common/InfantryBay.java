@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.util.NumberHelper;
+
 /**
  * Represents a volume of space set aside for carrying infantry platoons
  * aboard large spacecraft and mobile structures.  Marines count as crew and should have at least steerage quarters.
@@ -168,7 +170,7 @@ public final class InfantryBay extends Bay {
         } else {
             sb.append(" squad");
         }
-        if (getUnusedSlots() != 1) {
+        if (!NumberHelper.nearlyEqual(getUnusedSlots(), 1d)) {
             sb.append("s");
         }
         return sb.toString();

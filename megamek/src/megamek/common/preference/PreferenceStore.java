@@ -14,6 +14,8 @@
 
 package megamek.common.preference;
 
+import megamek.common.util.NumberHelper;
+
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
@@ -170,20 +172,20 @@ class PreferenceStore implements IPreferenceStore {
 
     public void setValue(String name, double value) {
         double oldValue = getDouble(name);
-        if (oldValue != value) {
+        //if (oldValue != value) {
+        if (!NumberHelper.nearlyEqual(oldValue, value)) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Double(oldValue), new Double(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
     public void setValue(String name, float value) {
         float oldValue = getFloat(name);
-        if (oldValue != value) {
+        if (!NumberHelper.nearlyEqual(oldValue, value)) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -192,8 +194,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Integer(oldValue), new Integer(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -202,7 +203,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -220,8 +221,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 

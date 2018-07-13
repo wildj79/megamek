@@ -17,9 +17,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import megamek.common.IPlayer;
 import megamek.common.Report;
+import megamek.common.util.NumberHelper;
 
 /**
  * quick implementation of a Victory.Result stores player scores and a flag if
@@ -28,10 +30,10 @@ import megamek.common.Report;
 public class VictoryResult implements IResult {
     protected boolean victory;
     protected Throwable tr;
-    protected ArrayList<Report> reports = new ArrayList<Report>();
-    protected HashMap<Integer, Double> playerScore = new HashMap<Integer, Double>();
-    protected HashMap<Integer, Double> teamScore = new HashMap<Integer, Double>();
-    protected double hiScore = 0;
+    protected ArrayList<Report> reports = new ArrayList<>();
+    private Map<Integer, Double> playerScore = new HashMap<>();
+    private Map<Integer, Double> teamScore = new HashMap<>();
+    private double hiScore = 0;
 
     protected VictoryResult(boolean win) {
         this.victory = win;
@@ -49,53 +51,43 @@ public class VictoryResult implements IResult {
         }
     }
     
-    protected static VictoryResult noResult() {
+    static VictoryResult noResult() {
     	return new VictoryResult(false, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
     
-    protected static VictoryResult drawResult() {
+    static VictoryResult drawResult() {
         return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
 
     public int getWinningPlayer() {
-        double max = Double.MIN_VALUE;
-        int maxPlayer = IPlayer.PLAYER_NONE;
-        boolean draw = false;
-        for (int i : playerScore.keySet()) {
-            if (playerScore.get(i) == max) {
-                draw = true;
-            }
-            if (playerScore.get(i) > max) {
-                draw = false;
-                max = playerScore.get(i);
-                maxPlayer = i;
-            }
-        }
-        if (draw)
-            return IPlayer.PLAYER_NONE;
-        return maxPlayer;
+        return getWinnerInternal(playerScore, IPlayer.PLAYER_NONE);
     }
-
+    
     public int getWinningTeam() {
-        double max = Double.MIN_VALUE;
-        int maxTeam = IPlayer.TEAM_NONE;
-        boolean draw = false;
-        for (int i : teamScore.keySet()) {
-            if (teamScore.get(i) == max) {
-                draw = true;
-            }
-            if (teamScore.get(i) > max) {
-                draw = false;
-                max = teamScore.get(i);
-                maxTeam = i;
-            }
-        }
-        if (draw)
-            return IPlayer.TEAM_NONE;
-        return maxTeam;
+        return getWinnerInternal(teamScore, IPlayer.TEAM_NONE);
     }
 
-    protected void updateHiScore() {
+    private int getWinnerInternal(Map<Integer, Double> scoreMap, int defaultValue) {
+        boolean draw = false;
+        int retVal = defaultValue;
+        double max = Double.MIN_VALUE;
+
+        for (int i : scoreMap.keySet()) {
+            if (NumberHelper.nearlyEqual(scoreMap.get(i), max)) {
+                draw = true;
+            }
+
+            if (scoreMap.get(i) > max) {
+                draw = false;
+                max = scoreMap.get(i);
+                retVal = i;
+            }
+        }
+
+        return draw ? defaultValue : retVal;
+    }
+
+    private void updateHiScore() {
         // used to calculate winner
         hiScore = Double.MIN_VALUE;
         for (Double d : playerScore.values()) {
@@ -108,12 +100,12 @@ public class VictoryResult implements IResult {
         }
     }
 
-    public void addPlayerScore(int id, double score) {
+    void addPlayerScore(int id, double score) {
         playerScore.put(id, score);
         updateHiScore();
     }
 
-    public void addTeamScore(int id, double score) {
+    void addTeamScore(int id, double score) {
         teamScore.put(id, score);
         updateHiScore();
     }
@@ -121,13 +113,13 @@ public class VictoryResult implements IResult {
     public boolean isWinningPlayer(int id) {
         double d = getPlayerScore(id);
         // two decimal compare..
-        return ((d * 100) % 100) == ((hiScore * 100) % 100);
+        return NumberHelper.nearlyEqual((d * 100) % 100, (hiScore * 100) % 100);
     }
 
     public boolean isWinningTeam(int id) {
         double d = getTeamScore(id);
         // two decimal compare..
-        return ((d * 100) % 100) == ((hiScore * 100) % 100);
+        return NumberHelper.nearlyEqual((d * 100) % 100, (hiScore * 100) % 100);
     }
 
     public boolean victory() {

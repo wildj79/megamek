@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.options.GameOptions;
+import megamek.common.util.NumberHelper;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
@@ -1087,7 +1088,7 @@ public class EquipmentType implements ITechnology {
                 w.write(",");
                 w.write(getEquipDateAsString(type.getReintroductionDate()));
                 w.write(",");
-                if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
+                if (NumberHelper.nearlyEqual(type.tonnage, EquipmentType.TONNAGE_VARIABLE)) {
                     w.write("Variable");
                 } else {
                     w.write(Double.toString(type.tonnage));
@@ -1099,13 +1100,13 @@ public class EquipmentType implements ITechnology {
                     w.write(Integer.toString(type.criticals));
                 }
                 w.write(",");
-                if (type.cost == EquipmentType.COST_VARIABLE) {
+                if (NumberHelper.nearlyEqual(type.cost, EquipmentType.COST_VARIABLE)) {
                     w.write("Variable");
                 } else {
                     w.write(Double.toString(type.getCost(null, false, -1)));
                 }
                 w.write(",");
-                if (type.bv == EquipmentType.BV_VARIABLE) {
+                if (NumberHelper.nearlyEqual(type.bv, EquipmentType.BV_VARIABLE)) {
                     w.write("Variable");
                 } else {
                     w.write(Double.toString(type.bv));

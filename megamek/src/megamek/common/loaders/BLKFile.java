@@ -73,6 +73,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
+import megamek.common.util.NumberHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 public class BLKFile {
@@ -743,7 +744,7 @@ public class BLKFile {
             if (et != null) {
             	blk.writeBlockData("armorKit", et.getInternalName());
             }
-            if (infantry.getDamageDivisor() != 1) {
+            if (!NumberHelper.nearlyEqual(infantry.getDamageDivisor(),1d)) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getDamageDivisor()));
             }

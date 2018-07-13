@@ -45,6 +45,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.WeaponType;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 
 /**
@@ -268,7 +269,7 @@ public abstract class TestEntity implements TestEntityOption {
     protected static String makeWeightString(double weight) {
         return (weight < 100 ? " " : "") + (weight < 10 ? " " : "")
                 + Double.toString(weight)
-                + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
+                + (NumberHelper.nearlyEqual(Math.ceil(weight * 10), weight * 10) ? "0" : "");
     }
 
     /**

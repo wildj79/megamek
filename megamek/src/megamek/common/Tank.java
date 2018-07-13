@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.NumberHelper;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -3897,7 +3898,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        if ((getArmorRemainingPercent() <= 0.33) && !NumberHelper.nearlyEqual(getArmorRemainingPercent(), IArmorState.ARMOR_NA)) {
             return true;
         }
 
@@ -3919,7 +3920,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgModerate() {
-        if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        if ((getArmorRemainingPercent() <= 0.67) && !NumberHelper.nearlyEqual(getArmorRemainingPercent(), IArmorState.ARMOR_NA)) {
             return true;
         }
 
@@ -3946,7 +3947,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        if ((getArmorRemainingPercent() <= 0.8) && !NumberHelper.nearlyEqual(getArmorRemainingPercent(), IArmorState.ARMOR_NA)) {
             return true;
         }
 

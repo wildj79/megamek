@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.util.NumberHelper;
+
 /**
  * Represents a volume of space set aside for carrying livestock
  */
@@ -67,17 +69,15 @@ public final class LivestockCargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Livestock Cargo Space "
+        StringBuilder returnString = new StringBuilder("Livestock Cargo Space "
                 + numDoorsString() + " - ");
 
-        if (getUnused() != Math.round(getUnused())) {
+        if (!NumberHelper.nearlyEqual(getUnused(), Math.round(getUnused()))) {
             returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
             returnString.append(String.format("%1$,.0f", getUnused()));

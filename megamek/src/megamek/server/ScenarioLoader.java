@@ -74,6 +74,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.NumberHelper;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
@@ -188,10 +189,10 @@ public class ScenarioLoader {
         }
         int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType() : 0;
         if((((AmmoType) newAmmoType).getRackSize() == ((AmmoType) currentAmmoType).getRackSize())
-            && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
-            && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
-            && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))
-            && (((AmmoType) newAmmoType).getAmmoType() == weaponAmmoType)) {
+               && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
+               && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
+               && NumberHelper.nearlyEqual(newAmmoType.getTonnage(e), currentAmmoType.getTonnage(e))
+               && (((AmmoType) newAmmoType).getAmmoType() == weaponAmmoType)) {
             return (AmmoType) newAmmoType;
         } else {
             return null;

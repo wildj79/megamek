@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.util.NumberHelper;
+
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -420,7 +422,7 @@ public class ECMInfo {
             return false;
         }
         final ECMInfo other = (ECMInfo)obj;
-        return Objects.equals(owner, other.owner) && Objects.equals(pos, other.pos) && (strength == other.strength) 
+        return Objects.equals(owner, other.owner) && Objects.equals(pos, other.pos) && NumberHelper.nearlyEqual(strength, other.strength) 
                 && (angelStrength == other.angelStrength) && (eccmStrength == other.eccmStrength) 
                 && (angelECCMStrength == other.angelECCMStrength) && (isECMNova == other.isECMNova) && (range == other.range);
     }

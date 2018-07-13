@@ -34,6 +34,7 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.util.NumberHelper;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -813,7 +814,7 @@ public class EntityListFile {
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 Infantry inf = (Infantry) entity;
-                if (inf.getDamageDivisor() != 1) {
+                if (!NumberHelper.nearlyEqual(inf.getDamageDivisor(), 1d)) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
                     output.write(inf.getDamageDivisor() + "");
                 }

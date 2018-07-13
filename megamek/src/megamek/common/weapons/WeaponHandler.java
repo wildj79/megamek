@@ -49,6 +49,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.NumberHelper;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 import megamek.server.SmokeCloud;
@@ -1827,7 +1828,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 } else if ((atkLev > tarLev)
                         && (levit >= (((range - travel) * (levDif / range)) + tarLev))) {
                     refrac++;
-                } else if ((atkLev == tarLev) && (levit >= 0)) {
+                } else if (NumberHelper.nearlyEqual(atkLev, tarLev) && (levit >= 0)) {
                     refrac++;
                 }
                 travel++;

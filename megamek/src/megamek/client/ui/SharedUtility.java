@@ -41,6 +41,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.NumberHelper;
 import megamek.server.Server;
 
 public class SharedUtility {
@@ -819,7 +820,7 @@ public class SharedUtility {
         // first check whether we are splitting hexes
         boolean split = false;
         double degree = start.degree(end);
-        if ((degree % 60) == 30) {
+        if (NumberHelper.nearlyEqual(degree % 60, 30d)) {
             split = true;
             in = Coords.intervening(start, end, true);
         }

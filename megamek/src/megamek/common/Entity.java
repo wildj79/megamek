@@ -56,6 +56,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.NumberHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
@@ -9295,8 +9296,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int result = MP;
         if (game != null) {
             float fMP = MP / game.getPlanetaryConditions().getGravity();
-            fMP = (Math.abs((Math.round(fMP) - fMP)) == 0.5) ? (float) Math
-                    .floor(fMP) : Math.round(fMP); // the
+            fMP = NumberHelper.nearlyEqual(Math.abs(Math.round(fMP) - fMP), 0.5) ? 
+                  (float) Math.floor(fMP) : Math.round(fMP); // the
             // rule
             // requires
             // rounding down on .5
